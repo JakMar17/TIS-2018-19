@@ -10,6 +10,14 @@ function [izhod, crc] = naloga3(vhod, n, k)
   % crc   - crc vrednost izracunana po CRC-16 
   %         nad vhodnim vektorjem (sestnajstisko)
   % izhod - vektor podatkovnih bitov, dekodiranih iz vhoda
+  
+  %Hammingov kod
+  pkg load communications
+  m = n - k;
+  dolzinaVhoda = size(vhod,2)
+  stPaketov = dolzinaVhoda/n;
+  [h,g,n,k] = hammgen(3)
+    
 
   % CRC
   vhod;
