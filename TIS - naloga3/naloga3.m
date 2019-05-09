@@ -11,19 +11,14 @@ function [izhod, crc] = naloga3(vhod, n, k)
   %         nad vhodnim vektorjem (sestnajstisko)
   % izhod - vektor podatkovnih bitov, dekodiranih iz vhoda
   
-  %Hammingov kod
-  pkg load communications
-  m = n - k;
-  dolzinaVhoda = size(vhod,2)
-  stPaketov = dolzinaVhoda/n;
-  [h,g,n,k] = hammgen(3)
+
     
 
   % CRC
   vhod;
   gx = [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0];
   size(gx);
-  velikost = size(vhod, 2);
+  velikost = size(vhod, 2)
   %tmp = gx(16)
   
   for i = 1:velikost
@@ -31,14 +26,18 @@ function [izhod, crc] = naloga3(vhod, n, k)
     p5 = xor(gx(5), pm);
     p12 = xor(gx(12), pm);
     
-    gx = circshift(gx, 1);
+    gx = circshift(gx, 1, 2);
+    
     gx(1) = pm;
     gx(6) = p5;
     gx(13) = p12;
     gx;
   end
+  gx;
   
   obrnjena = (1:16);
+  %obrnjena = obrni(obrnjena,size(obrnjena,2), 1);
+  obrnjena = circshift(obrnjena,1,2);
   velikost = size(gx,2);
   for i = 1:velikost
     obrnjena(i) = gx(velikost+1-i);
@@ -48,5 +47,21 @@ function [izhod, crc] = naloga3(vhod, n, k)
   obrnjena = dec2hex(obrnjena);
   
   izhod=1;
-  crc = obrnjena
+  crc = obrnjena;
 end
+
+function [out] = obrni (tabela, n, d)
+  for i = 2:d+1
+    out=obrniZaEna(tabela,n);
+  endfor
+  out=tabela;
+endfunction
+
+function [out] = obrniZaEna (tabela,n)
+  temp = tabela(1);
+  for i = 2:n-1
+    tabela(i) = tabela(i+1);
+  endfor
+  tabela(n) = temp;
+  out = tabela;
+endfunction
