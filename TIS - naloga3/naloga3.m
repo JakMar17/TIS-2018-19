@@ -11,10 +11,89 @@ function [izhod, crc] = naloga3(vhod, n, k)
   %         nad vhodnim vektorjem (sestnajstisko)
   % izhod - vektor podatkovnih bitov, dekodiranih iz vhoda
   
+  stPaketov = size(vhod,2)/n;
+  m = n -k;
+  %H = zeros(m, n)
+  H = [];
+  leksiografski = [];
+  identiteta = eye(m);
+  stId = 1;
+  
+  stolpec = zeros(m,1);
+  st = 1;
+  id = 0;
+  stEnic = 0;
+  %st = dec2bin(st);
+  for i = 1:n
+    stolpec = zeros(m,1);
+    st = dec2bin(st);
+    st; 
+    l = length(st);
+    for j = 1:m
+      if (length(st) >= j && st(l) == "1")
+        stevka = 1;
+        stEnic++;
+      else
+        stevka = 0;
+      endif
+      stolpec(j) = stevka;
+      l--;
+    endfor
+    stolpec;
+    st = bin2dec(st);
+    st++;
+    H = horzcat(H, stolpec);
+    if (stEnic != 1)
+      leksiografski = horzcat(leksiografski, stolpec);
+    endif
+    stEnic = 0;
+  endfor
+  H;
+  leksiografski = horzcat(leksiografski, eye(m));
 
-    
+  if (stPaketov > 1)
+    y = reshape(vhod, n, stPaketov);
+    y = y';
+  else
+    y = vhod;
+  endif
+  
+  s = y*leksiografski';
+  for i = 1:stPaketov
+    tmp = s(i:i, 1:end);
+    s(i:i, 1:end) = mod(tmp, 2);
+  endfor
 
-  % CRC
+  if (s != 0)
+    iz = [];
+    for i = 1:stPaketov
+      sindromV = s(i:i, 1:end)';
+      vektorNapake = [];
+      for j = 1:n
+        Hv = leksiografski(1:end, j:j);
+        if (sindromV == Hv)
+          vektorNapake = horzcat(vektorNapake, 1);
+        else
+          vektorNapake = horzcat(vektorNapake, 0);
+        endif
+      endfor
+      iTemp = y(i:i, 1:end);
+      iz = horzcat(iz, xor(iTemp, vektorNapake));
+    endfor
+    izh = [];
+    for i = 1:m+1
+      izh = horzcat(izh, iz(i));
+    endfor
+    izhod = izh'
+  else
+    izh = [];
+    for i = 1:m+1
+      izh = horzcat(izh, vhod(i));
+    endfor
+    izhod = izh'
+  endif
+
+   % CRC
   vhod;
   gx = [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0];
   size(gx);
@@ -47,7 +126,7 @@ function [izhod, crc] = naloga3(vhod, n, k)
   obrnjena = dec2hex(obrnjena);
   
   izhod=1;
-  crc = obrnjena;
+  crc = obrnjena
 end
 
 function [out] = obrni (tabela, n, d)
