@@ -64,34 +64,51 @@ function [izhod, crc] = naloga3(vhod, n, k)
     s(i:i, 1:end) = mod(tmp, 2);
   endfor
 
-  if (s != 0)
-    iz = [];
-    for i = 1:stPaketov
-      sindromV = s(i:i, 1:end)';
-      vektorNapake = [];
-      for j = 1:n
-        Hv = leksiografski(1:end, j:j);
-        if (sindromV == Hv)
-          vektorNapake = horzcat(vektorNapake, 1);
-        else
-          vektorNapake = horzcat(vektorNapake, 0);
+  %if (s != 0)
+  %  for i = 1:stPaketov
+  %    sindrom = s(i:i, 1:end)';
+  %    vektorNapake = zeros(1, n);
+  %    for j = 1:n
+  %      stolpec = leksiografski(1:end, j:j);
+  %      if (stolpec == sindrom)
+  %        vektorNapake(j) = 1;
+  %        y(i:i, 1:end) = xor(y(i:i, 1:end), vektorNapake);
+  %      endif
+  %    endfor
+  %  endfor
+  %        %y(i:i, 1:end) xor (y(i:i, 1:end), 
+  %  izhod = y (1:end, 1:k)';
+  %else
+  %  izhod = y(1:end, 1:k);
+  %endif
+  
+  %for i = 1:stPaketov
+  %  for j=1:n
+  %    stolpec = leksiografski(1:end, j:j);
+  %    sindrom = s(i:i, 1:end)';
+  %    if (stolpec == sindrom)
+  %      vektorNapake = repmat([false], 1, n);
+  %      e(j) = true;
+  %      y (i:i, 1:end) = xor (y(i:i, 1:end), e);
+  %    endif
+  %  endfor
+  %endfor
+
+  %if (s != 0)
+    for i=1:stPaketov
+      sindrom = s(i:i,1:end)';
+      vektorNapake = zeros(1,n);
+      for j=1:n
+        stolpec = leksiografski(1:end, j:j);
+        if(sindrom == stolpec)
+          vektorNapake(j) = 1;
         endif
       endfor
-      iTemp = y(i:i, 1:end);
-      iz = horzcat(iz, xor(iTemp, vektorNapake));
+      y(i:i,1:end) = xor(y(i:i,1:end),vektorNapake);
     endfor
-    izh = [];
-    for i = 1:m+1
-      izh = horzcat(izh, iz(i));
-    endfor
-    izhod = izh'
-  else
-    izh = [];
-    for i = 1:m+1
-      izh = horzcat(izh, vhod(i));
-    endfor
-    izhod = izh'
-  endif
+  %endif
+
+  izhod = y(1:end, 1:k)';
 
    % CRC
   vhod;
@@ -125,7 +142,7 @@ function [izhod, crc] = naloga3(vhod, n, k)
   obrnjena = bin2dec(obrnjena);
   obrnjena = dec2hex(obrnjena);
   
-  izhod=1;
+  %izhod=1;
   crc = obrnjena
 end
 
